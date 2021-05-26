@@ -12,7 +12,6 @@ export default class {
 
         // Pre-Existing Users
         if (existsSync(this.filePath)) {
-            console.log('exist')
             const stored = readFileSync(this.filePath, 'cbor');
             this.migrate(stored, this.initial);
         }
