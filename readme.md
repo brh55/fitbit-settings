@@ -1,6 +1,6 @@
 # fitbit-settings [![Travis branch](https://img.shields.io/travis/brh55/fitbit-settings/master.svg?style=flat-square)](https://travis-ci.org/brh55/fitbit-settings) [![Coveralls branch](https://img.shields.io/coveralls/brh55/fitbit-settings/master.svg?style=flat-square)](https://coveralls.io/github/brh55/fitbit-settings) [![npm badge](https://img.shields.io/npm/dt/fitbit-settings.svg?style=flat-square)](https://www.npmjs.com/package/fitbit-settings)
 
-> A dead simple module to assist managing user settings within Fitbit watch faces and applications
+> 🏴‍☠️ A dead simple module to assist managing user settings within Fitbit watch faces and applications
 
 `fitbit-settings` is designed to be a simple way to help manage essential aspects of user settings within your watch faces and applications. It includes some common goodies like persisting into disk, chainable methods for managing state, and migration handling. Given it's simple nature, it doesn't handle complex scenarios well such as nested properties, so be warned, *matey*.
 
@@ -87,7 +87,7 @@ Reset internal setting state back to default settings
 
 - [Pixels on Ridge](https://pixelsonridge.com)
 
-> Feel free to submit your studio with a GitHub issue
+> If you are using, `fitbit-settings`, feel free to add your studio by submitting a GitHub issue
 
 ## License
 
