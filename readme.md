@@ -15,7 +15,7 @@ $ npm install --save fitbit-settings
 ```js
 import Settings from 'fitbit-settings';
 
-const appSettings = new Settings({
+const defaultSettings = {
     color_background: '#000',
     color_label: '#fff',
     hide_battery: false,
@@ -25,12 +25,16 @@ const appSettings = new Settings({
     color_battery: '#fff'
 });
 
+
+const appSettings = new Settings(defaultSettings);
+
 appSettings
     .update('color_battery', 'red')
     .update('color_hour', 'yellow')
     .save(); // Update State and Persist to Disk
 
 appSettings.reset().save(); // Reset user settings
+
 document.getElementById('battery').style.fill = appSettings.getProp('color_battery');
 ```
 
@@ -80,7 +84,8 @@ Reset internal setting state back to default settings
 
 ## Used By
 `fitbit-settings` is currently being used in these production watch faces and applications:
-    - [Pixels on Ridge](https://pixelsonridge.com)
+
+- [Pixels on Ridge](https://pixelsonridge.com)
 
 > Feel free to submit your studio with a GitHub issue
 
