@@ -1,8 +1,11 @@
-# fitbit-settings [![Travis branch](https://img.shields.io/travis/brh55/fitbit-settings/master.svg?style=flat-square)](https://travis-ci.org/brh55/fitbit-settings) [![Coveralls branch](https://img.shields.io/coveralls/brh55/fitbit-settings/master.svg?style=flat-square)](https://coveralls.io/github/brh55/fitbit-settings) [![npm badge](https://img.shields.io/npm/dt/fitbit-settings.svg?style=flat-square)](https://www.npmjs.com/package/fitbit-settings)
+# fitbit-settings 
+[![Travis branch](https://img.shields.io/travis/brh55/fitbit-settings/main.svg?style=flat-square)](https://travis-ci.org/brh55/fitbit-settings) [![Coveralls branch](https://img.shields.io/coveralls/brh55/fitbit-settings/master.svg?style=flat-square)](https://coveralls.io/github/brh55/fitbit-settings) [![npm badge](https://img.shields.io/npm/dt/fitbit-settings.svg?style=flat-square)](https://www.npmjs.com/package/fitbit-settings)
 
-> 🏴‍☠️ A dead simple module to assist managing user settings within Fitbit watch faces and applications
+> 🏴‍☠️ A dead simple module to assist managing and persisting user settings within Fitbit watch faces and applications
 
-`fitbit-settings` is designed to be a simple way to help manage essential aspects of user settings within your watch faces and applications. It includes some common goodies like persisting into disk, chainable methods for managing state, and migration handling. Given it's simple nature, it doesn't handle complex scenarios well such as nested properties, so be warned, *matey*.
+`fitbit-settings` is designed to be a simple way to help manage essential aspects of user settings within your watch faces and applications. It includes some common goodies like persisting to disk, chainable methods for managing state, and migration handling. Given it's simple nature, it doesn't handle complex scenarios well such as nested properties, so be warned, *matey*.
+
+**Note:** This module is designed to only works for Fitbit OS (JerryScript).
 
 ## Install
 
@@ -11,6 +14,9 @@ $ npm install --save fitbit-settings
 ```
 
 ## Usage
+It's recommended to keep things as flat as possible, and prefix properties if need be. This will keep the settings lean, and prevent unexpected overrides of settings upon reboots.
+
+When initialize `fitbit-settings` will retrieve pre-existing stored settings on the device, and update the stored settings with any new default settings passed in the constructor. This is done automatically to prevent issues that occur when adding new settings on an updated build.
 
 ```js
 import Settings from 'fitbit-settings';
@@ -24,7 +30,6 @@ const defaultSettings = {
     color_minute: '#fff',
     color_battery: '#fff'
 });
-
 
 const appSettings = new Settings(defaultSettings);
 
