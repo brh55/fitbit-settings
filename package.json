@@ -1,6 +1,6 @@
 {
   "name": "fitbit-settings",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A dead simple module to assist managing user settings within Fitbit watch faces and applications",
   "repository": {
     "type": "git",
@@ -21,9 +21,6 @@
       ]
     ]
   },
-  "files": [
-    "./index.js"
-  ],
   "keywords": [
     "fitbit development",
     "fitbt watch faces",
