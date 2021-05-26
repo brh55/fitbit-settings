@@ -1,7 +1,7 @@
 module.exports = api => {
     const isTest = api.env('test');
-    // You can use isTest to determine what presets and plugins to use.
-  
+
+    // Include ES Modules for Jest
     if (isTest) {
         return {
             "presets": [
@@ -17,6 +17,7 @@ module.exports = api => {
         }
     }
 
+    // Add object assign shim
     return {
         "presets": [
             [
@@ -25,6 +26,7 @@ module.exports = api => {
                 "modules": false
               }
             ]
-        ]
+        ],
+        "plugins": ["@babel/plugin-transform-object-assign"]
     };
 };

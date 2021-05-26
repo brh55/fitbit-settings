@@ -19,27 +19,29 @@ export default class Settings {
         this.save();
     }
 
-    save = () => {
+    save () {
         writeFileSync(this.filePath, this.state, 'cbor');
         return this;
     }
 
-    update = (prop, value) => {
+    update (prop, value) {
         this.state[prop] = value;
         return this;
     }
 
     // Currently we are keeping existing settings and only support 1 depth
     // but we may want a means to purge unused settings
-    migrate = (storedSettings, newSettings) => {
+    migrate (storedSettings, newSettings) {
         const migratedSettings = Object.assign({}, newSettings, storedSettings);
         this.state = migratedSettings;
     }
 
-    reset = () => {
+    reset () {
         this.state = this.initial;
         return this;
     }
 
-    getProp = (prop) => this.state[prop];
+    getProp (prop) {
+        return this.state[prop];
+    }
 };
