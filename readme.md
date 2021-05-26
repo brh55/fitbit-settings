@@ -28,13 +28,16 @@ const defaultSettings = {
 
 const appSettings = new Settings(defaultSettings);
 
+// Update State and Persist to Disk
+
 appSettings
     .update('color_battery', 'red')
     .update('color_hour', 'yellow')
-    .save(); // Update State and Persist to Disk
+    .save();
 
-appSettings.reset().save(); // Reset user settings
+appSettings.reset().save(); // Reset user settings and update disk
 
+// Set style based on settings
 document.getElementById('battery').style.fill = appSettings.getProp('color_battery');
 ```
 
