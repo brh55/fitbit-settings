@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
-export default class {
+export default class Settings {
     initial = {};
     state = {};
     filePath = 'settings.cbor';

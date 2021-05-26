@@ -4,10 +4,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
-var _default = function _default(defaultSettings, filePath) {
+var Settings = function Settings(defaultSettings, filePath) {
   var _this = this;
 
-  _classCallCheck(this, _default);
+  _classCallCheck(this, Settings);
 
   _defineProperty(this, "initial", {});
 
@@ -51,5 +51,5 @@ var _default = function _default(defaultSettings, filePath) {
   this.save();
 };
 
-export { _default as default };
+export { Settings as default };
 ;

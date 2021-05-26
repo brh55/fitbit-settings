@@ -1,4 +1,4 @@
-import Settings from '/source';
+import Settings from './source';
 import fs from 'fs';
 
 jest.mock('fs');

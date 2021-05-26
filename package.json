@@ -11,16 +11,6 @@
     "prepublish": "npm run build",
     "test": "jest --coverage && coveralls < coverage/lcov.info"
   },
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "modules": false
-        }
-      ]
-    ]
-  },
   "keywords": [
     "fitbit development",
     "fitbt watch faces",
