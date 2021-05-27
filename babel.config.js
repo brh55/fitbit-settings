@@ -23,6 +23,9 @@ module.exports = api => {
             [
               "@babel/preset-env",
               {
+                "targets": {
+                    "ie": "10"
+                },
                 "modules": false
               }
             ]
