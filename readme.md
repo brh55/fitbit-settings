@@ -1,11 +1,22 @@
 # fitbit-settings 
 [![Travis branch](https://img.shields.io/travis/brh55/fitbit-settings/main.svg?style=flat-square)](https://travis-ci.org/brh55/fitbit-settings) [![Coveralls branch](https://img.shields.io/coveralls/brh55/fitbit-settings/master.svg?style=flat-square)](https://coveralls.io/github/brh55/fitbit-settings) [![npm badge](https://img.shields.io/npm/dt/fitbit-settings.svg?style=flat-square)](https://www.npmjs.com/package/fitbit-settings)
 
-> 🏴‍☠️ A dead simple module to assist managing and persisting user settings within Fitbit watch faces and applications
+> 🏴‍☠️ A dead simple module to assist managing and persisting user settings within Fitbit watch faces, applications, and companion.
 
-`fitbit-settings` is designed to be a simple way to help manage essential aspects of user settings within your watch faces and applications. It includes some common goodies like persisting to disk, chainable methods for managing state, and migration handling. Given it's simple nature, it doesn't handle complex scenarios well such as nested properties, so be warned, *matey*.
+`fitbit-settings` is designed to be a brainless way to help manage essential aspects of user settings within your watch faces and applications. 
 
-**Note:** This module is designed to only works for Fitbit OS (JerryScript).
+It includes the common goodies: 
+- Persisting to disk and retrieving stored settings
+- Chainable methods
+- Migration for stored settings for updates
+- Automatically update settings for changes in the companion including offline changes, done in settings storage
+- Sync companion with device driven changes (i.e UI toggles in app)
+- Callback registration for setting changes in companion
+- Tested for coverage and code quality
+
+This is intended to be be simple and flat by nature, thus, it doesn't handle nested settings, so be warned, *matey*.
+
+**Note:** This module is designed to only works for Fitbit OS (JerryScript) and still in *alpha* for some potential bugs.
 
 ## Install
 
@@ -18,8 +29,10 @@ It's recommended to keep things as flat as possible, and prefix properties if ne
 
 When initialize `fitbit-settings` will retrieve pre-existing stored settings on the device, and update the stored settings with any new default settings passed in the constructor. This is done automatically to prevent issues that occur when adding new settings on an updated build.
 
+### Simple - Device Side Only
+
 ```js
-import Settings from 'fitbit-settings';
+import FsSettings from 'fitbit-settings/app';
 
 const defaultSettings = {
     color_background: '#000',
@@ -31,7 +44,7 @@ const defaultSettings = {
     color_battery: '#fff'
 });
 
-const appSettings = new Settings(defaultSettings);
+const appSettings = new FsSettings(defaultSettings);
 
 // Update State and Persist to Disk
 
@@ -46,21 +59,84 @@ appSettings.reset().save(); // Reset user settings and update disk
 document.getElementById('battery').style.fill = appSettings.getProp('color_battery');
 ```
 
-## API
+### Advance - Companion and Device Side
+Make sure to utilize the same defaults across a common export to act as a source of truth.
+
+**Common Files: `/common/default-settings.js**
+```js
+export const defaultSettings = {
+    color_background: '#000',
+    color_label: '#fff',
+    hide_battery: false,
+    tap_disable: true,
+    color_hour: '#000cec9',
+    color_minute: '#fff',
+    color_battery: '#fff'
+});
+```
+
+Initialize with default settings within a singleton to use across different files and activate the `listen` method.
+
+**App File: /app/settings.js**
+```js
+import FsSettings from 'fitbit-settings/app';
+import defaultSettings from './common/defaultSettings';
+
+const appSettings = new FsSettings(defaultSettings, {
+    syncWithCompanion: true // set to true if you want to allow your watch face UI to make changes to the settings
+};
+
+// Start listening for changes from the companion
+appSettings.listen();
+
+// Register event handlers that will get called every time this changes from the companion
+appSettings.onPropChange('color_background', (event) => { doSomething(event) });
+appSettings.onPropChange('color_hour', (event) => { 
+    setHourColor(event.data.value);
+});
+
+// Make settings changed in the UI
+appSettings.update('tap_disable', false);
+```
+
+**Companion File**
+```js
+import defaultSettings from './common/defaultSettings';
+
+const companionSettings = new FsSettings(defaultSettings);
+companionSettings.listen();
+```
+
+## fitbit-settings/app API
 
 ### Settings()
 **Type:** `class`<br>
-**Usage:** `new Settings(defaultSettings, filePath)`
+**Usage:** `new FsSettings(defaultSettings, options)`
 
 #### defaultSettings
 **Type:** `object`<br>
 Default settings for the application / watch face
 
-#### filePath
+#### options
+**Type:** `object`<br>
+
+##### options.filePath
 **Type:** `string`<br>
 Override the default file path ('settings.cbor').
 
+##### options.syncWithCompanion
+**Type:** `boolean`<br>
+Allow updates to notify the companion / setting storage. This is typically for when you may allow the user to update the settings within the watch face.
+
 ## Instance Methods
+### .listen()
+**Returns:** `instance`<Settings>
+Activate listeners to watch for changes in the companion, this requires the settings to also be listening in the companion side.
+
+### .onPropChange(propName, callback)
+**Returns:** `instance`<Settings>
+Register callbacks for companion changes that occur when listening. Limited to 1 callback per a propName.
+
 ### .getProp(propName)
 **Returns:** Value of prop stored in memory state
 
@@ -70,9 +146,9 @@ Override the default file path ('settings.cbor').
 Prop of setting to retrieve `IE: 'color_battery'`
 
 ### .update(prop, value)
-Returns class `instance`
+**Returns:** `instance`<Settings>
 
-If no prop currently exists, this will create a new one.
+Updates the current setting state within the app. If no prop currently exists, this will create a new one. In addition, syncWithCompanion will notify the companion of this update.
 
 #### prop
 **Type:** `string`<br>
@@ -89,6 +165,17 @@ Persist existing setting state to watch disk.
 Returns class `instance`
 
 Reset internal setting state back to default settings
+
+
+## fitbit-settings/companion API
+### Settings()
+**Type:** `class`<br>
+**Usage:** `new FsSettings(defaultSettings)`
+
+## Instance Methods
+### .listen()
+Activate listeners to watch for notifications from the device and notify the device for property changes in the settings storage / settings app.
+
 
 ## Used By
 `fitbit-settings` is currently being used in these production watch faces and applications:

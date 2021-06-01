@@ -30,10 +30,10 @@ export default class Settings {
 
     update(prop, value) {
         if (!this.state[prop]) {
-            console.log(this.initial)
             console.warn(`fitbit-settings/app: Prop, ${prop}, not passed in default settings, this may result in stray props saved`);
         }
-    
+        if (this.state[props] === value) return;
+
         this.state[prop] = value;
 
         if (this.syncWithCompanion) {
@@ -72,7 +72,12 @@ export default class Settings {
                 this.update(prop, event.data.value);
 
                 if (this.propCallbacks[prop]) {
-                    this.propCallbacks[prop]();
+                    this.propCallbacks[prop]({
+                        data: {
+                            prop: prop,
+                            value: event.data.value
+                        }
+                    });
                 }
 
                 this.save();
