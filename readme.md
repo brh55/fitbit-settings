@@ -7,13 +7,13 @@
 
 It includes the common goodies: 
 - Persisting to disk and retrieving stored settings
-- Chainable methods
+- Chain-able methods for state management
 - Handles migration of stored settings on app updates
 - Automatically deals with changes in the companion including offline changes and changes in settings storage
 - Support for companion syncing from device driven updates (i.e setting toggles within app)
 - Callback registration for changes in companion
 
-This is intended to be be simple and flat by nature, thus, it doesn't handle nested settings, so be warned, *matey*.
+This is intended to be be simple, small (<20 kB), and flat by nature. Thus, it doesn't handle nested settings, so be warned, *matey*.
 
 **Note:** This module is designed to only works for Fitbit OS (JerryScript) and still in *alpha* for some potential bugs.
 
