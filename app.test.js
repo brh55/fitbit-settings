@@ -1,4 +1,4 @@
-import FsSettings from './source/app';
+import FsSettings from './src/app';
 import fs from 'fs';
 import messaging from 'messaging';
 

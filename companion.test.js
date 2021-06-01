@@ -1,4 +1,4 @@
-import FsSettings from './source/companion';
+import FsSettings from './src/companion';
 import messaging from 'messaging';
 import { settingsStorage } from 'settings';
 import { peerSocket } from 'messaging';
