@@ -4,12 +4,12 @@ module.exports = api => {
     // Include ES Modules for Jest
     if (isTest) {
         return {
-            "presets": [
+            presets: [
                 [
                   "@babel/preset-env",
                   {
-                    "targets": {
-                        "esmodules": true
+                    targets: {
+                        esmodules: true
                     }
                   }
                 ]
@@ -19,17 +19,18 @@ module.exports = api => {
 
     // Add object assign shim
     return {
-        "presets": [
+        presets: [
             [
               "@babel/preset-env",
               {
-                "targets": {
-                    "ie": "10"
+                targets: {
+                    ie: "10"
                 },
-                "modules": false
+                modules: false
               }
             ]
         ],
-        "plugins": ["@babel/plugin-transform-object-assign"]
+        only: ["src/*.js"],
+        plugins: ["@babel/plugin-transform-object-assign"]
     };
 };
