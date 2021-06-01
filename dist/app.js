@@ -54,10 +54,10 @@ var Settings = /*#__PURE__*/function () {
     key: "update",
     value: function update(prop, value) {
       if (!this.state[prop]) {
-        console.log(this.initial);
         console.warn("fitbit-settings/app: Prop, ".concat(prop, ", not passed in default settings, this may result in stray props saved"));
       }
 
+      if (this.state[props] === value) return;
       this.state[prop] = value;
 
       if (this.syncWithCompanion) {
@@ -102,7 +102,12 @@ var Settings = /*#__PURE__*/function () {
           _this.update(prop, event.data.value);
 
           if (_this.propCallbacks[prop]) {
-            _this.propCallbacks[prop]();
+            _this.propCallbacks[prop]({
+              data: {
+                prop: prop,
+                value: event.data.value
+              }
+            });
           }
 
           _this.save();
