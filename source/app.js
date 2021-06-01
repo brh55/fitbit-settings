@@ -4,14 +4,15 @@ import { peerSocket } from "messaging";
 export default class Settings {
     initial = {};
     state = {};
-    filePath = 'settings.cbor';
-    listener = null;
+    filePath = ''
+    syncWithCompanion = false;
     propCallbacks = [];
 
-    constructor(defaultSettings, filePath) {
+    constructor(defaultSettings, { filePath = 'settings.cbor', syncWithCompanion = 'false' } = {}) {
         this.initial = defaultSettings;
         this.state = defaultSettings;
-        this.filePath = filePath || this.filePath;
+        this.filePath = filePath;
+        this.syncWithCompanion = syncWithCompanion;
 
         // Pre-Existing Users
         if (existsSync(this.filePath)) {
@@ -28,7 +29,17 @@ export default class Settings {
     }
 
     update(prop, value) {
+        if (!this.state[prop]) {
+            console.log(this.initial)
+            console.warn(`fitbit-settings/app: Prop, ${prop}, not passed in default settings, this may result in stray props saved`);
+        }
+    
         this.state[prop] = value;
+
+        if (this.syncWithCompanion) {
+            this.sendMessage(prop, value);
+        }
+
         return this;
     }
 
@@ -49,11 +60,10 @@ export default class Settings {
     }
 
     listen() {
-        console.log('listening for setting changes')
-        this.listener = peerSocket.addEventListener('message', event => {
+        peerSocket.addEventListener('message', event => {
             // Assume all FS_SETTING prefix events are from this module
-            // FS_SETTING_UPDATE:PROP_NAME
-            if (event.data.prop && event.data.prop.indexOf('FS_SETTING_UPDATE:') !== -1) {
+            // FS_SETTINGS_UPDATE:PROP_NAME
+            if (event.data.prop && event.data.prop.indexOf('FS_SETTINGS_UPDATE:') !== -1) {
                 const prop = event.data.prop.split(':')[1];
 
                 const noChange = this.getProp(prop) === event.data.value;
@@ -69,11 +79,29 @@ export default class Settings {
             }
         });
 
+        // Notify companion of settings stored
+        // only get what we need
+        if (this.syncWithCompanion) {
+            peerSocket.addEventListener('open', () => {
+                peerSocket.send({
+                    key: 'FS_SETTINGS_SYNC:INIT',
+                    value: this.state
+                });
+            });
+        }
+
         return this;
     }
 
     onPropChange(prop, callback) {
         this.propCallbacks[prop] = callback;
         return this;
+    }
+
+    sendMessage(prop, value) {
+        return peerSocket.send({
+            prop: 'FS_SETTINGS_UPDATE:' + prop,
+            value
+        });
     }
 };
