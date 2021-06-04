@@ -32,7 +32,7 @@ export default class Settings {
         if (!this.state[prop]) {
             console.warn(`fitbit-settings/app: Prop, ${prop}, not passed in default settings, this may result in stray props saved`);
         }
-        if (this.state[props] === value) return;
+        if (this.state[prop] === value) return;
 
         this.state[prop] = value;
 

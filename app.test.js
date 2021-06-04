@@ -131,6 +131,20 @@ describe('fitbit-settings/app', () => {
          }, 'cbor');
     });
 
+    test('listen() provides the companion with its current state', () => {
+        const settings = new FsSettings({ 'foo': 'bar' });
+        settings.listen();
+
+        messaging.peerSocket.emitMockEvent('open', {});
+
+        expect(messaging.peerSocket.send).toHaveBeenCalledWith({
+            key: 'FS_SETTINGS_SYNC:INIT',
+            value: {
+                foo: 'bar'
+            }
+        })
+    });
+
     test('listen() register message event handler', () => {
         const settings = new FsSettings({ 'foo': 'bar' });
         settings.listen();
