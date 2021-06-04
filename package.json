@@ -6,11 +6,8 @@
     "type": "git",
     "url": "https://github.com/brh55/fitbit-settings.git"
   },
-  "exports": {
-    ".": "./dist"
-  },
   "scripts": {
-    "build": "babel src --out-dir dist",
+    "build": "babel src --out-dir .",
     "prepublish": "npm run build",
     "test": "jest --coverage && coveralls < coverage/lcov.info"
   },
