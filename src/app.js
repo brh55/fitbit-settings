@@ -36,7 +36,9 @@ export default class Settings {
 
         this.state[prop] = value;
 
-        if (this.syncWithCompanion) {
+        if (this.syncWithCompanion === true) {
+            if (peerSocket.readyState !== peerSocket.OPEN) 
+                return console.warn('fitbit-settings/app: Connection with companion has been not established yet, updating props too soon.');
             this.sendMessage(prop, value);
         }
 
@@ -86,12 +88,14 @@ export default class Settings {
 
         // Notify companion of settings stored
         // only get what we need
-        if (this.syncWithCompanion) {
+        if (this.syncWithCompanion === true) {
             peerSocket.addEventListener('open', () => {
                 peerSocket.send({
                     key: 'FS_SETTINGS_SYNC:INIT',
                     value: this.state
                 });
+
+                console.info('fitbit-settings/app: Fitbit settings ready! Connection with companion has been established, updates will now be synced.');
             });
         }
 

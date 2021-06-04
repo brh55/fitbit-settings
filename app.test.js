@@ -132,7 +132,7 @@ describe('fitbit-settings/app', () => {
     });
 
     test('listen() provides the companion with its current state', () => {
-        const settings = new FsSettings({ 'foo': 'bar' });
+        const settings = new FsSettings({ 'foo': 'bar' }, { syncWithCompanion: true });
         settings.listen();
 
         messaging.peerSocket.emitMockEvent('open', {});
