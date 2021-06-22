@@ -3,14 +3,14 @@
 
 > 🏴‍☠️ A dead simple module to assist managing and persisting user settings within Fitbit watch faces, applications, and companion.
 
-`fitbit-settings` is designed to be a brainless way to help manage essential aspects of user settings within your watch faces and applications. 
+`fitbit-settings` is designed to be a plug-and-play approach to help manage essential aspects of the user's settings within your watch faces and applications. 
 
-It includes the common goodies: 
+It includes the the following goodies: 
 - Persisting and retrieving of stored settings (device storage)
-- Chain-able methods for state management
 - Migration of stored settings upon changes to default settings
 - Best-effort bi-directional syncing between companion and device for offline changes, device driven changes, and `settingsStorage` changes
 - Event handlers for companion changes
+- Chain-able methods for state management
 
 This is intended to be be simple, small (<20 kB), and flat by nature. Thus, it doesn't handle nested settings, so be warned, *matey*.
 
@@ -22,13 +22,21 @@ This is intended to be be simple, small (<20 kB), and flat by nature. Thus, it d
 $ npm install --save fitbit-settings
 ```
 
+## Lifecycle
+**On initializing**
+1. The device will update it's state by retrieve any pre-existing settings stored on the device and migrate any new setting properties found in the default settings.
+
+**On listening**
+1. The device will sync the companion with it's current settings 
+    1. The companion will parse the differences and notify the device of the changes that may have occurred when disconnected
+    2. The device will update the properties with the missing changes and save them to the device
+2. The device will listen for changes done within the settings app or `settingsStorage` and automatically update the settings stored in the device
+3. If the `syncWithCompanion` option is set, the device will persist any changes through the `.update()` method to the companion, the companion will then update the `settingsStorage`
+
 ## Usage
-It's recommended to keep things as flat as possible, and prefix properties if need be. This will keep the settings lean, and prevent unexpected overrides of settings upon reboots.
+It's recommended to keep things as flat as possible, and prefix properties if need be (i.e `color_background`, `display_battery`). This will keep the settings lean and prevent unexpected overrides of settings upon reboots and migrations.
 
-When initialize `fitbit-settings` will retrieve pre-existing stored settings on the device, and update the stored settings with any new default settings passed in the constructor. This is done automatically to prevent issues that occur when adding new settings on an updated build.
-
-### Simple - Device Side Only
-
+### Simple - Device Only
 ```js
 import FsSettings from 'fitbit-settings/app';
 
@@ -44,20 +52,22 @@ const defaultSettings = {
 
 const appSettings = new FsSettings(defaultSettings);
 
-// Update State and Persist to Disk
-
+// Update settings (color_battery, color_hour)
+// Persist to Device Disk
 appSettings
     .update('color_battery', 'red')
     .update('color_hour', 'yellow')
     .save();
 
-appSettings.reset().save(); // Reset user settings to default settings and update disk
+// Reset to default settings
+// Persist to disk
+appSettings.reset().save();
 
 // Set style based on settings
 document.getElementById('battery').style.fill = appSettings.getProp('color_battery');
 ```
 
-### Advance - Companion and Device Side
+### Advance - Companion and Device
 Make sure to utilize the same defaults across a common export to act as a source of truth.
 
 **Common Files: `/common/default-settings.js**
@@ -81,7 +91,8 @@ import FsSettings from 'fitbit-settings/app';
 import defaultSettings from './common/defaultSettings';
 
 const appSettings = new FsSettings(defaultSettings, {
-    syncWithCompanion: true // set to true if you want to allow your watch face UI to make changes to the settings
+    // set to true if you want to allow your watch face UI to make changes to the settings
+    syncWithCompanion: true 
 };
 
 // Register event handlers that will get called every time this changes from the companion
