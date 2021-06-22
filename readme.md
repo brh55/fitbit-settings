@@ -6,12 +6,11 @@
 `fitbit-settings` is designed to be a brainless way to help manage essential aspects of user settings within your watch faces and applications. 
 
 It includes the common goodies: 
-- Persisting to disk and retrieving stored settings
+- Persisting and retrieving of stored settings (device storage)
 - Chain-able methods for state management
-- Handles migration of stored settings on app updates
-- Automatically deals with changes in the companion including offline changes and changes in settings storage
-- Support for companion syncing from device driven updates (i.e setting toggles within app)
-- Callback registration for changes in companion
+- Migration of stored settings upon changes to default settings
+- Best-effort bi-directional syncing between companion and device for offline changes, device driven changes, and `settingsStorage` changes
+- Event handlers for companion changes
 
 This is intended to be be simple, small (<20 kB), and flat by nature. Thus, it doesn't handle nested settings, so be warned, *matey*.
 
@@ -52,7 +51,7 @@ appSettings
     .update('color_hour', 'yellow')
     .save();
 
-appSettings.reset().save(); // Reset user settings and update disk
+appSettings.reset().save(); // Reset user settings to default settings and update disk
 
 // Set style based on settings
 document.getElementById('battery').style.fill = appSettings.getProp('color_battery');
@@ -85,14 +84,14 @@ const appSettings = new FsSettings(defaultSettings, {
     syncWithCompanion: true // set to true if you want to allow your watch face UI to make changes to the settings
 };
 
-// Start listening for changes from the companion
-appSettings.listen();
-
 // Register event handlers that will get called every time this changes from the companion
 appSettings.onPropChange('color_background', (event) => { doSomething(event) });
 appSettings.onPropChange('color_hour', (event) => { 
     setHourColor(event.data.value);
 });
+
+// Update and sync changes with companion if connection exists
+appSettings.listen();
 
 // Make settings changed in the UI
 appSettings.update('tap_disable', false);

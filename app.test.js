@@ -131,35 +131,24 @@ describe('fitbit-settings/app', () => {
          }, 'cbor');
     });
 
-    test('listen() provides the companion with its current state', done => {
+    test('listen() provides the companion with its current state', () => {
         const settings = new FsSettings({ 'foo': 'bar' }, { syncWithCompanion: true });
         settings.listen();
 
-
-        settings
-            .listen()
-            .then(state => {
-                expect(messaging.peerSocket.send).toHaveBeenCalledWith({
-                    key: 'FS_SETTINGS_SYNC:INIT',
-                    value: {
-                        foo: 'bar'
-                    }
-                });
-                done();
-            });
-
         messaging.peerSocket.emitMockEvent('open', {});
+        expect(messaging.peerSocket.send).toHaveBeenCalledWith({
+            key: 'FS_SETTINGS_SYNC:INIT',
+            value: {
+                foo: 'bar'
+            }
+        });
     });
 
-    test('listen() register message event handler', done => {
+    test('listen() register message event handler', () => {
         const settings = new FsSettings({ 'foo': 'bar' });
         
-        settings
-            .listen()
-            .then(state => {
-                expect(messaging.peerSocket.addEventListener.mock.calls[0][0]).toBe('message');
-                done();
-            });
+        settings.listen();
+        expect(messaging.peerSocket.addEventListener.mock.calls[0][0]).toBe('message');
 
         // Trigger resolve
         messaging.peerSocket.emitMockEvent('open');
