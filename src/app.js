@@ -85,18 +85,19 @@ export default class Settings {
                 this.save();
             }
         });
+    
+        return new Promise((resolve) => {
+            peerSocket.addEventListener('open', () => {
+                peerSocket.send({
+                    key: 'FS_SETTINGS_SYNC:INIT',
+                    value: this.state
+                });
 
-
-        peerSocket.addEventListener('open', () => {
-            peerSocket.send({
-                key: 'FS_SETTINGS_SYNC:INIT',
-                value: this.state
+                console.info('fitbit-settings/app: Fitbit settings ready! Connection with companion has been established, updates will now be synced.');
+                resolve(this.state);
             });
-
-            console.info('fitbit-settings/app: Fitbit settings ready! Connection with companion has been established, updates will now be synced.');
+            
         });
-
-        return this;
     }
 
     onPropChange(prop, callback) {

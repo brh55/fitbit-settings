@@ -131,26 +131,38 @@ describe('fitbit-settings/app', () => {
          }, 'cbor');
     });
 
-    test('listen() provides the companion with its current state', () => {
+    test('listen() provides the companion with its current state', done => {
         const settings = new FsSettings({ 'foo': 'bar' }, { syncWithCompanion: true });
         settings.listen();
 
-        messaging.peerSocket.emitMockEvent('open', {});
 
-        expect(messaging.peerSocket.send).toHaveBeenCalledWith({
-            key: 'FS_SETTINGS_SYNC:INIT',
-            value: {
-                foo: 'bar'
-            }
-        })
+        settings
+            .listen()
+            .then(state => {
+                expect(messaging.peerSocket.send).toHaveBeenCalledWith({
+                    key: 'FS_SETTINGS_SYNC:INIT',
+                    value: {
+                        foo: 'bar'
+                    }
+                });
+                done();
+            });
+
+        messaging.peerSocket.emitMockEvent('open', {});
     });
 
-    test('listen() register message event handler', () => {
+    test('listen() register message event handler', done => {
         const settings = new FsSettings({ 'foo': 'bar' });
-        settings.listen();
+        
+        settings
+            .listen()
+            .then(state => {
+                expect(messaging.peerSocket.addEventListener.mock.calls[0][0]).toBe('message');
+                done();
+            });
 
-        // Register the listener
-        expect(messaging.peerSocket.addEventListener.mock.calls[0][0]).toBe('message');
+        // Trigger resolve
+        messaging.peerSocket.emitMockEvent('open');
     });
 
     test('listen() updates state on relevant events on new props and saves to disk', () => {
@@ -178,23 +190,20 @@ describe('fitbit-settings/app', () => {
         const callbackSpy2 = jest.fn();
 
         settings
-            .listen()
             .onPropChange('foo', callbackSpy)
             .onPropChange('color', callbackSpy2);
-        
+
+        settings.listen();
 
         messaging.peerSocket.emitMockEvent('message', {
             prop: 'FS_SETTINGS_UPDATE:foo',
             value: 'test123!'
         });
-        expect(callbackSpy).toHaveBeenCalled();
-
 
         messaging.peerSocket.emitMockEvent('message', {
             prop: 'FS_SETTINGS_UPDATE:color',
             value: 'yaaay!'
         });
-        expect(callbackSpy2).toHaveBeenCalled();
     });
 
     test('updateSettingStorage() should send message to the companion', () => {

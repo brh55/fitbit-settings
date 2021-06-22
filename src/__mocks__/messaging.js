@@ -2,7 +2,10 @@ const messaging = {};
 
 
 messaging.peerSocket = {
-    registeredHandlers: {},
+    registeredHandlers: {
+        open: [],
+        message: []
+    },
     addEventListener: jest.fn((eventName, cb) => {
         const handlers = messaging.peerSocket.registeredHandlers[eventName] || [];
         handlers.push(cb);
