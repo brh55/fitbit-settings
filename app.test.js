@@ -144,9 +144,21 @@ describe('fitbit-settings/app', () => {
 
         settings.listen();
 
-        expect(mockCb1).toHaveBeenCalledWith('bar');
-        expect(mockCb2).toHaveBeenCalledWith(1);
-        expect(mockCb3).toHaveBeenCalledWith(true);
+        expect(mockCb1).toHaveBeenCalledWith({
+            data: {
+                prop: 'prop1', value: 'bar'
+            }
+        });
+        expect(mockCb2).toHaveBeenCalledWith({
+            data: {
+                prop: 'prop2', value: 1
+            }
+        });
+        expect(mockCb3).toHaveBeenCalledWith({
+            data: {
+                prop: 'prop3', value: true
+            }
+        });
     });
 
     test('listen() provides the companion with its current state', () => {

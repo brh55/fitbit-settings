@@ -102,8 +102,12 @@ export default class Settings {
         if (this.callListenersOnInit) {
             console.info('fitbit-settings/app: Calling listeners on initial activation.');
             Object.keys(this.propCallbacks).map(prop => {
-                const propValue = this.getProp(prop);
-                this.propCallbacks[prop](propValue);
+                const value = this.getProp(prop);
+                this.propCallbacks[prop]({
+                    data: {
+                        prop, value
+                    }
+                });
             });
         }
 
