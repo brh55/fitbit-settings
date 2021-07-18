@@ -9,10 +9,11 @@ It includes the the following goodies:
 - Persisting and retrieving of stored settings (device storage)
 - Migration of stored settings upon changes to default settings
 - Best-effort bi-directional syncing between companion and device for offline changes, device driven changes, and `settingsStorage` changes
+- Automatically cast strings to associated types (i.e: "true" -> true)
 - Event handlers for companion changes
 - Chain-able methods for state management
 
-This is intended to be be simple, small (<20 kB), and flat by nature. Thus, it doesn't handle nested settings, so be warned, *matey*.
+This is intended to be be simple, light, and flat by nature. Thus, it doesn't handle nested settings, so be warned, *matey*.
 
 **Note:** This module is designed to only works for Fitbit OS (JerryScript) and still in *alpha* for some potential bugs.
 
@@ -92,20 +93,23 @@ import defaultSettings from './common/defaultSettings';
 
 const appSettings = new FsSettings(defaultSettings, {
     // set to true if you want to allow your watch face UI to make changes to the settings
-    syncWithCompanion: true 
+    syncWithCompanion: true,
+    callListenersOnInit: true
 };
 
-// Register event handlers that will get called every time this changes from the companion
-appSettings.onPropChange('color_background', (event) => { doSomething(event) });
-appSettings.onPropChange('color_hour', (event) => { 
-    setHourColor(event.data.value);
-});
+// Register event handlers that will get called every time this changes from the companion as well as called upon when the watchface initially loads
+appSettings.onPropChange('color_background', 
+    (event) => setBackgroundColor(event.data.value));
+appSettings.onPropChange('color_hour', event => setHourColor(event.data.value));
 
 // Update and sync changes with companion if connection exists
 appSettings.listen();
 
-// Make settings changed in the UI
-appSettings.update('tap_disable', false);
+// Update the settings based on events in the UI,
+// but also update the companion settings
+if (userClickedElement) {
+    appSettings.update('tap_disable', false);
+}
 ```
 
 **Companion File**
@@ -136,6 +140,10 @@ Override the default file path ('settings.cbor').
 ##### options.syncWithCompanion
 **Type:** `boolean`<br>
 Allow updates to notify the companion / setting storage. This is typically for when you may allow the user to update the settings within the watch face.
+
+##### options.callListenersOnInit
+**Type:** `boolean`<br>
+Upon calling `listen()`, fitbit-settings will also call all `.onPropChange` listeners with its current values. This is useful for watchfaces with listeners that need to be called on initialization.
 
 ## Instance Methods
 ### .listen()
