@@ -185,6 +185,12 @@ Reset internal setting state back to default settings
 ### .listen()
 Activate listeners to watch for notifications from the device and notify the device for property changes in the settings storage / settings app.
 
+## Contribute
+All files are written within the `src` directory and compiled to to ES5 to support the Fitbit JavaScript runtime. Once the files are built, these are outputted to the project's root directory. In order to build these files, run `npm run build`.
+
+Prior to publishing or submitting a pull request, it's best to include some test/spec files. The test suite uses [Jest](https://jestjs.io/), and can the suite can be executed with `npm run test`.
+
+If you need any help, feel free to submit an issue.
 
 ## Used By
 `fitbit-settings` is currently being used in these production watch faces and applications:
@@ -193,17 +199,6 @@ Activate listeners to watch for notifications from the device and notify the dev
 
 > If you are using, `fitbit-settings`, feel free to add your studio by submitting a GitHub issue
 
-
-## Contribute
-All files are written within the `src` directory and compiled and outputted on the project's root directory.
-
-To build the files, run `npm run build`.
-
-Prior to publishing or submitting a pull request, it's best to include some test/spec files. 
-
-These are written with [Jest](https://jestjs.io/), and can the suite can be executed with `npm run test`.
-
-If you need any help, feel free to submit an issue.
 
 ## License
 
