@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { peerSocket } from "messaging";
+import { autoCast } from './utils';
 
 export default class Settings {
     initial = {};
@@ -67,17 +68,17 @@ export default class Settings {
             // FS_SETTINGS_UPDATE:PROP_NAME
             if (event.data.prop && event.data.prop.indexOf('FS_SETTINGS_UPDATE:') !== -1) {
                 const prop = event.data.prop.split(':')[1];
-
-                const noChange = this.getProp(prop) === event.data.value;
+                const value = autoCast(event.data.value);
+                const noChange = this.getProp(prop) === value;
                 if (noChange) return;
         
-                this.update(prop, event.data.value);
+                this.update(prop, value);
 
                 if (this.propCallbacks[prop]) {
                     this.propCallbacks[prop]({
                         data: {
                             prop: prop,
-                            value: event.data.value
+                            value
                         }
                     });
                 }

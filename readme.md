@@ -193,6 +193,18 @@ Activate listeners to watch for notifications from the device and notify the dev
 
 > If you are using, `fitbit-settings`, feel free to add your studio by submitting a GitHub issue
 
+
+## Contribute
+All files are written within the `src` directory and compiled and outputted on the project's root directory.
+
+To build the files, run `npm run build`.
+
+Prior to publishing or submitting a pull request, it's best to include some test/spec files. 
+
+These are written with [Jest](https://jestjs.io/), and can the suite can be executed with `npm run test`.
+
+If you need any help, feel free to submit an issue.
+
 ## License
 
 MIT © [Brandon Him](https://github.com/brh55/fitbit-settings)
