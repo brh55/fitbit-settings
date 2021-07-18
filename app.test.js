@@ -131,6 +131,24 @@ describe('fitbit-settings/app', () => {
          }, 'cbor');
     });
 
+    test('listen() calls stored listeners on init', () => {
+        const settings = new FsSettings({
+            prop1: 'bar', prop2: 1, prop3: true }, { callListenersOnInit: true });
+        const mockCb1 = jest.fn();
+        const mockCb2 = jest.fn();
+        const mockCb3 = jest.fn();
+    
+        settings.onPropChange('prop1', mockCb1);
+        settings.onPropChange('prop2', mockCb2);
+        settings.onPropChange('prop3', mockCb3);
+
+        settings.listen();
+
+        expect(mockCb1).toHaveBeenCalledWith('bar');
+        expect(mockCb2).toHaveBeenCalledWith(1);
+        expect(mockCb3).toHaveBeenCalledWith(true);
+    });
+
     test('listen() provides the companion with its current state', () => {
         const settings = new FsSettings({ 'foo': 'bar' }, { syncWithCompanion: true });
         settings.listen();
@@ -192,6 +210,20 @@ describe('fitbit-settings/app', () => {
         messaging.peerSocket.emitMockEvent('message', {
             prop: 'FS_SETTINGS_UPDATE:color',
             value: 'yaaay!'
+        });
+
+        expect(callbackSpy).toHaveBeenCalledWith({
+            data: {
+                prop: "foo",
+                value: "test123!"
+            }
+        });
+
+        expect(callbackSpy2).toHaveBeenCalledWith({
+            data: {
+                prop: "color",
+                value: "yaaay!"
+            }
         });
     });
 

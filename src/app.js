@@ -9,11 +9,12 @@ export default class Settings {
     syncWithCompanion = false;
     propCallbacks = [];
 
-    constructor(defaultSettings, { filePath = 'settings.cbor', syncWithCompanion = 'false' } = {}) {
+    constructor(defaultSettings, { filePath = 'settings.cbor', syncWithCompanion = 'false', callListenersOnInit = 'false' } = {}) {
         this.initial = defaultSettings;
         this.state = defaultSettings;
         this.filePath = filePath;
         this.syncWithCompanion = syncWithCompanion;
+        this.callListenersOnInit = callListenersOnInit;
 
         // Pre-Existing Users
         if (existsSync(this.filePath)) {
@@ -95,6 +96,16 @@ export default class Settings {
 
             console.info('fitbit-settings/app: Connection with companion has been established, syncing companion with app state changes.');
         });
+
+        // Use this option if you want to call all of your listeners
+        // when fitbit-settings loads initially
+        if (this.callListenersOnInit) {
+            console.info('fitbit-settings/app: Calling listeners on initial activation.');
+            Object.keys(this.propCallbacks).map(prop => {
+                const propValue = this.getProp(prop);
+                this.propCallbacks[prop](propValue);
+            });
+        }
 
         return this;
     }
