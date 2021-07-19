@@ -31,7 +31,7 @@ export default class Settings {
     }
 
     update(prop, value) {
-        if (!this.state[prop]) {
+        if (typeof this.state[prop] === 'undefined') {
             console.warn(`fitbit-settings/app: Prop, ${prop}, not passed in default settings, this may result in stray props saved`);
         }
         if (this.state[prop] === value) return;
